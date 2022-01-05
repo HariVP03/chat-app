@@ -4,16 +4,14 @@ import { Flex, chakra, Avatar, Text } from '@chakra-ui/react';
 const MessagePreview: React.FC<{
   senderName: string;
   message: string;
-  senderAvatar?: string;
   timeSent: Date;
   handleOnClick: React.Dispatch<
     React.SetStateAction<{
       senderName: string;
       senderStatus: 'Online' | 'Busy' | 'Typing...' | 'Offline' | '';
-      senderAvatar: string | undefined;
     }>
   >;
-}> = ({ senderName, message, senderAvatar, timeSent, handleOnClick }) => {
+}> = ({ senderName, message, timeSent, handleOnClick }) => {
   return (
     <Flex
       cursor="pointer"
@@ -21,7 +19,6 @@ const MessagePreview: React.FC<{
         handleOnClick({
           senderName,
           senderStatus: 'Online',
-          senderAvatar,
         });
       }}
       bg="#90e0ef"
@@ -37,7 +34,6 @@ const MessagePreview: React.FC<{
       _hover={{ bg: '#89c2d9' }}
     >
       <Flex>
-        <Avatar mr={3} src={senderAvatar} />
         <Flex direction="column" ml={1}>
           <chakra.h4 mb={0} fontFamily="'Karla', sans-serif;">
             {senderName}

@@ -1,11 +1,18 @@
-import React from 'react';
-import { Flex, chakra, Avatar } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { Flex, chakra, Avatar, Input, Button } from '@chakra-ui/react';
 
 const ChatBox: React.FC<{
   senderName: string;
+  onMsgSend: (name: string, msg: string) => void;
+  messages: {
+    senderName: string;
+    msg: string;
+  }[];
   senderStatus: 'Online' | 'Busy' | 'Typing...' | 'Offline' | '';
-  senderAvatar: string | undefined;
-}> = ({ senderName, senderStatus, senderAvatar }) => {
+}> = ({ senderName, senderStatus, onMsgSend, messages }) => {
+  const [msg, setMsg] = useState('');
+  const userName = 'Hari';
+
   return (
     <Flex minW="60%" minH="100%" overflowY="scroll" direction="column">
       <Flex
@@ -17,7 +24,6 @@ const ChatBox: React.FC<{
         pl={3}
       >
         <Flex>
-          {senderAvatar !== null ? <Avatar src={senderAvatar} /> : ''}
           <Flex ml={2} direction="column" justify="center">
             <chakra.h3 fontFamily="'Signika Negative', sans-serif" my={0}>
               {senderName}
@@ -28,7 +34,56 @@ const ChatBox: React.FC<{
           </Flex>
         </Flex>
       </Flex>
-      <Flex minH="150vh"></Flex>
+      <Flex minH="88%" bg="#90e0ef" direction="column">
+        <Flex w="full" h="90%" direction="column">
+          {messages?.map(e => {
+            return (
+              <Flex
+                justify={e.senderName === userName ? 'end' : 'start'}
+                align="center"
+                w="full"
+                minH="10%"
+              >
+                <Flex
+                  justify="center"
+                  bg="green.500"
+                  m={3}
+                  px={2}
+                  rounded="md"
+                  direction="column"
+                  h="95%"
+                >
+                  <chakra.h1 fontWeight="bold" color="blue.100" pb={2}>
+                    {e.senderName}
+                  </chakra.h1>
+                  <chakra.h3>{e.msg}</chakra.h3>
+                </Flex>
+              </Flex>
+            );
+          })}
+        </Flex>
+        <Flex w="full" h="10%" align="center">
+          <Input
+            ml={2}
+            type="text"
+            value={msg}
+            placeholder="Type your message here"
+            border="1px solid"
+            borderColor="gray.600"
+            onChange={e => {
+              setMsg(e.target.value);
+            }}
+          />
+          <Button
+            mx={2}
+            onClick={() => {
+              onMsgSend(userName, msg);
+            }}
+          >
+            Send
+          </Button>
+        </Flex>
+      </Flex>
     </Flex>
   );
 };

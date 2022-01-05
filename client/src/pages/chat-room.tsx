@@ -9,11 +9,23 @@ import io from 'socket.io-client';
 const socket = io('http://localhost:3000');
 
 const ChatRoom = () => {
-  console.log(socket);
+  const [messages, setMessages] = useState<
+    {
+      senderName: string;
+      msg: string;
+    }[]
+  >([]);
 
   useEffect(() => {
     socket.on('message', ({ name, msg }) => {
-      console.log(name, msg);
+      setMessages(prev => {
+        let temp = JSON.parse(JSON.stringify(prev));
+        temp.push({
+          senderName: name,
+          msg,
+        });
+        return temp;
+      });
     });
   }, []);
 
@@ -21,8 +33,7 @@ const ChatRoom = () => {
   const [data, setData] = useState<{
     senderName: string;
     senderStatus: 'Online' | 'Busy' | 'Typing...' | 'Offline' | '';
-    senderAvatar: string | undefined;
-  }>({ senderName: '', senderStatus: '', senderAvatar: '' });
+  }>({ senderName: '', senderStatus: '' });
 
   return (
     <Flex justify="center" align="center" h="100vh" w="100vw" bg="gray.800">
@@ -55,11 +66,11 @@ const ChatRoom = () => {
               placeholder="Search..."
               borderColor="gray.400"
             />
-            <Button
-              onClick={e => {
-                socket.emit('message', { name: 'haha', msg: input });
-              }}
-            />
+            {/*<Button*/}
+            {/*  onClick={e => {*/}
+            {/*    socket.emit('message', { name: 'haha', msg: input });*/}
+            {/*  }}*/}
+            {/*/>*/}
           </Flex>
           <Flex justify="center" direction="column">
             <MessagePreview
@@ -77,9 +88,12 @@ const ChatRoom = () => {
           </Flex>
         </Flex>
         <ChatBox
+          messages={messages}
           senderName={data.senderName}
           senderStatus={data.senderStatus}
-          senderAvatar={data.senderAvatar}
+          onMsgSend={(name, msg) => {
+            socket.emit('message', { name, msg });
+          }}
         />
       </Flex>
     </Flex>
