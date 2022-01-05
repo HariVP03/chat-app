@@ -3,15 +3,15 @@ import { Flex, chakra, Avatar, Input, Button } from '@chakra-ui/react';
 
 const ChatBox: React.FC<{
   senderName: string;
+  username: string;
   onMsgSend: (name: string, msg: string) => void;
   messages: {
     senderName: string;
     msg: string;
   }[];
   senderStatus: 'Online' | 'Busy' | 'Typing...' | 'Offline' | '';
-}> = ({ senderName, senderStatus, onMsgSend, messages }) => {
+}> = ({ senderName, senderStatus, onMsgSend, username, messages }) => {
   const [msg, setMsg] = useState('');
-  const userName = 'Hari';
 
   return (
     <Flex minW="60%" minH="100%" overflowY="scroll" direction="column">
@@ -39,7 +39,7 @@ const ChatBox: React.FC<{
           {messages?.map(e => {
             return (
               <Flex
-                justify={e.senderName === userName ? 'end' : 'start'}
+                justify={e.senderName === username ? 'end' : 'start'}
                 align="center"
                 w="full"
                 minH="10%"
@@ -77,7 +77,8 @@ const ChatBox: React.FC<{
           <Button
             mx={2}
             onClick={() => {
-              onMsgSend(userName, msg);
+              onMsgSend(username, msg);
+              setMsg('');
             }}
           >
             Send

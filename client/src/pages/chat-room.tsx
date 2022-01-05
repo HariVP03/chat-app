@@ -1,10 +1,24 @@
 // @ts-ignore
 import React, { useEffect, useState } from 'react';
-import { Flex, chakra, Input, Button } from '@chakra-ui/react';
+import {
+  Flex,
+  chakra,
+  Input,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  Button,
+} from '@chakra-ui/react';
 import MessagePreview from '../components/messagePreview';
 import ChatBox from '../components/chatBox';
 import '../components/layout.css';
 import io from 'socket.io-client';
+import UserModal from '../components/UserModal';
 
 const socket = io('http://localhost:3000');
 
@@ -15,6 +29,8 @@ const ChatRoom = () => {
       msg: string;
     }[]
   >([]);
+
+  const [username, setUsername] = useState('Anonymous');
 
   useEffect(() => {
     socket.on('message', ({ name, msg }) => {
@@ -35,6 +51,8 @@ const ChatRoom = () => {
     senderStatus: 'Online' | 'Busy' | 'Typing...' | 'Offline' | '';
   }>({ senderName: '', senderStatus: '' });
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <Flex justify="center" align="center" h="100vh" w="100vw" bg="gray.800">
       <Flex minW="95vw" h="95vh" bg="#2b2d42" rounded="md">
@@ -53,9 +71,11 @@ const ChatRoom = () => {
               fontFamily="'Signika Negative', sans-serif"
               w="full"
               fontWeight="700"
+              my={3}
               textAlign="center"
+              fontSize="3xl"
             >
-              Welcome to your chat room
+              Welcome, {username}!
             </chakra.h1>
             <Input
               type="search"
@@ -66,11 +86,7 @@ const ChatRoom = () => {
               placeholder="Search..."
               borderColor="gray.400"
             />
-            {/*<Button*/}
-            {/*  onClick={e => {*/}
-            {/*    socket.emit('message', { name: 'haha', msg: input });*/}
-            {/*  }}*/}
-            {/*/>*/}
+            <Button onClick={onOpen}>Change name</Button>
           </Flex>
           <Flex justify="center" direction="column">
             <MessagePreview
@@ -88,6 +104,7 @@ const ChatRoom = () => {
           </Flex>
         </Flex>
         <ChatBox
+          username={username}
           messages={messages}
           senderName={data.senderName}
           senderStatus={data.senderStatus}
@@ -96,6 +113,7 @@ const ChatRoom = () => {
           }}
         />
       </Flex>
+      <UserModal setUsername={setUsername} onClose={onClose} isOpen={isOpen} />
     </Flex>
   );
 };
