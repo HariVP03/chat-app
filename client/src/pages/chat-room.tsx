@@ -4,7 +4,9 @@ import MessagePreview from '../components/messagePreview';
 import ChatBox from '../components/chatBox';
 import '../components/layout.css';
 import io from 'socket.io-client';
-import UserModal from '../components/UserModal';
+import UserModal from '../components/modals/UserModal';
+import CreateRoomModal from '../components/modals/CreateRoom';
+import JoinRoomModal from '../components/modals/JoinRoom';
 
 const socket = io('http://localhost:3000');
 
@@ -37,8 +39,35 @@ const ChatRoom = () => {
     title: string;
     senderStatus: 'Online' | 'Busy' | 'Typing...' | 'Offline' | '';
   }>({ title: 'Public Room #1', senderStatus: 'Online', roomCode: '1' });
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenEditName,
+    onOpen: onOpenEditName,
+    onClose: onCloseEditName,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenCreateRoom,
+    onOpen: onOpenCreateRoom,
+    onClose: onCloseCreateRoom,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenJoinRoom,
+    onOpen: onOpenJoinRoom,
+    onClose: onCloseJoinRoom,
+  } = useDisclosure();
   const [roomCode, setRoomCode] = useState('1');
+  const [rooms, setRooms] = useState<
+    {
+      title: string;
+      desc: string;
+      handleOnClickDataChange: () => void;
+      roomCode: string;
+      handleOnClickRoomJoin: () => void;
+    }[]
+  >([]);
+
+  useEffect(() => {
+    console.log(rooms);
+  }, [rooms]);
 
   return (
     <Flex justify="center" align="center" h="100vh" w="100vw" bg="gray.800">
@@ -73,7 +102,15 @@ const ChatRoom = () => {
               placeholder="Search..."
               borderColor="gray.400"
             />
-            <Button onClick={onOpen}>Change name</Button>
+            <Button border="1px solid black" my={1} onClick={onOpenEditName}>
+              Change name
+            </Button>
+            <Button border="1px solid black" mb={1} onClick={onOpenCreateRoom}>
+              Create a Room
+            </Button>
+            <Button border="1px solid black" onClick={onOpenJoinRoom}>
+              Join a Room
+            </Button>
           </Flex>
           <Flex justify="center" direction="column">
             <MessagePreview
@@ -97,6 +134,18 @@ const ChatRoom = () => {
                 setRoomCode('2');
               }}
             />
+            {rooms?.map(e => {
+              return (
+                <MessagePreview
+                  key={e.roomCode}
+                  title={e.title}
+                  desc={e.desc}
+                  handleOnClickDataChange={e.handleOnClickDataChange}
+                  roomCode={e.roomCode}
+                  handleOnClickRoomJoin={e.handleOnClickRoomJoin}
+                />
+              );
+            })}
           </Flex>
         </Flex>
         <ChatBox
@@ -110,7 +159,55 @@ const ChatRoom = () => {
           }}
         />
       </Flex>
-      <UserModal setUsername={setUsername} onClose={onClose} isOpen={isOpen} />
+      <UserModal
+        setUsername={setUsername}
+        onClose={onCloseEditName}
+        isOpen={isOpenEditName}
+      />
+      <CreateRoomModal
+        isOpen={isOpenCreateRoom}
+        onClose={onCloseCreateRoom}
+        onSubmit={(title: string, desc: string, roomCodeNew: string) => {
+          setRooms(prev => {
+            let temp = JSON.parse(JSON.stringify(prev));
+            temp.push({
+              title,
+              desc,
+              handleOnClickDataChange: () => {
+                setData({
+                  roomCode: roomCodeNew,
+                  senderStatus: 'Online',
+                  title,
+                });
+              },
+              roomCode: roomCodeNew,
+              handleOnClickRoomJoin: () => {
+                socket.emit('join', roomCodeNew, roomCode);
+                setRoomCode(roomCodeNew);
+              },
+            });
+            console.log(temp);
+
+            return temp;
+          });
+          console.log(rooms);
+          onCloseCreateRoom();
+        }}
+      />
+      <JoinRoomModal
+        isOpen={isOpenJoinRoom}
+        onClose={onCloseJoinRoom}
+        onSubmit={roomCodeJoin => {
+          socket.emit('join', roomCodeJoin, roomCode);
+          setRoomCode(roomCodeJoin);
+          setData({
+            roomCode: roomCodeJoin,
+            senderStatus: 'Online',
+            title: `Joined Room #${roomCodeJoin}`,
+          });
+          onCloseJoinRoom();
+        }}
+      />
     </Flex>
   );
 };

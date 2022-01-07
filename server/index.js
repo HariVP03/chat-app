@@ -17,6 +17,7 @@ io.on("connection", (socket) => {
   socket.join("1");
   socket.on("message", ({ name, msg, roomCode }) => {
     io.to(roomCode).emit("message", { name, msg });
+    console.log("Sent message to", roomCode);
   });
   socket.on("join", (roomCode, prevRoomCode) => {
     if (roomCode !== prevRoomCode) {
