@@ -3,14 +3,22 @@ import { Flex, chakra, Avatar, Input, Button } from '@chakra-ui/react';
 
 const ChatBox: React.FC<{
   senderName: string;
+  roomCode: string;
   username: string;
-  onMsgSend: (name: string, msg: string) => void;
+  onMsgSend: (name: string, msg: string, roomCode: string) => void;
   messages: {
     senderName: string;
     msg: string;
   }[];
   senderStatus: 'Online' | 'Busy' | 'Typing...' | 'Offline' | '';
-}> = ({ senderName, senderStatus, onMsgSend, username, messages }) => {
+}> = ({
+  senderName,
+  senderStatus,
+  onMsgSend,
+  username,
+  messages,
+  roomCode,
+}) => {
   const [msg, setMsg] = useState('');
 
   return (
@@ -70,14 +78,21 @@ const ChatBox: React.FC<{
             placeholder="Type your message here"
             border="1px solid"
             borderColor="gray.600"
+            onKeyPress={e => {
+              if (e.key === 'Enter') {
+                onMsgSend(username, msg, roomCode);
+                setMsg('');
+              }
+            }}
             onChange={e => {
               setMsg(e.target.value);
             }}
           />
           <Button
+            disabled={!Boolean(msg)}
             mx={2}
             onClick={() => {
-              onMsgSend(username, msg);
+              onMsgSend(username, msg, roomCode);
               setMsg('');
             }}
           >

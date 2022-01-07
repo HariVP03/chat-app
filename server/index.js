@@ -14,8 +14,16 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  socket.on("message", ({ name, msg }) => {
-    io.emit("message", { name, msg });
+  socket.join("1");
+  socket.on("message", ({ name, msg, roomCode }) => {
+    io.to(roomCode).emit("message", { name, msg });
+  });
+  socket.on("join", (roomCode, prevRoomCode) => {
+    if (roomCode !== prevRoomCode) {
+      socket.leave(prevRoomCode);
+      socket.join(roomCode);
+    }
+    console.log("Joined Room:", roomCode, "Left Room:", prevRoomCode);
   });
 });
 

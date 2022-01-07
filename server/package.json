@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "node index.js",
-    "dev": "nodemon node index.js"
+    "dev": "nodemon node index.js",
+    "server": "node index",
+    "client": "cd ../client && npm start"
   },
   "author": "",
   "license": "ISC",

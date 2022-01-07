@@ -1,19 +1,5 @@
-// @ts-ignore
 import React, { useEffect, useState } from 'react';
-import {
-  Flex,
-  chakra,
-  Input,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
-  Button,
-} from '@chakra-ui/react';
+import { Flex, chakra, Input, useDisclosure, Button } from '@chakra-ui/react';
 import MessagePreview from '../components/messagePreview';
 import ChatBox from '../components/chatBox';
 import '../components/layout.css';
@@ -47,11 +33,12 @@ const ChatRoom = () => {
 
   const [input, setInput] = useState('');
   const [data, setData] = useState<{
-    senderName: string;
+    roomCode: string;
+    title: string;
     senderStatus: 'Online' | 'Busy' | 'Typing...' | 'Offline' | '';
-  }>({ senderName: '', senderStatus: '' });
-
+  }>({ title: 'Public Room #1', senderStatus: 'Online', roomCode: '1' });
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [roomCode, setRoomCode] = useState('1');
 
   return (
     <Flex justify="center" align="center" h="100vh" w="100vw" bg="gray.800">
@@ -90,26 +77,36 @@ const ChatRoom = () => {
           </Flex>
           <Flex justify="center" direction="column">
             <MessagePreview
-              senderName="Hari Vishnu Parashar"
-              message="Fugiat ad cillum ex occaecat."
-              timeSent={new Date()}
-              handleOnClick={setData}
+              title="Public Room #1"
+              desc="Room Code: 1"
+              handleOnClickDataChange={setData}
+              roomCode={roomCode}
+              handleOnClickRoomJoin={() => {
+                socket.emit('join', '1', roomCode);
+                setRoomCode('1');
+              }}
             />
+
             <MessagePreview
-              senderName="Leonardo Di Caprio"
-              message="Enim dolore sit consequat ad proident..."
-              timeSent={new Date()}
-              handleOnClick={setData}
+              title="Public Room #2"
+              desc="Room Code: 2"
+              handleOnClickDataChange={setData}
+              roomCode={roomCode}
+              handleOnClickRoomJoin={() => {
+                socket.emit('join', '2', roomCode);
+                setRoomCode('2');
+              }}
             />
           </Flex>
         </Flex>
         <ChatBox
           username={username}
+          roomCode={roomCode}
           messages={messages}
-          senderName={data.senderName}
+          senderName={data.title}
           senderStatus={data.senderStatus}
-          onMsgSend={(name, msg) => {
-            socket.emit('message', { name, msg });
+          onMsgSend={(name, msg, roomCode) => {
+            socket.emit('message', { name, msg, roomCode });
           }}
         />
       </Flex>

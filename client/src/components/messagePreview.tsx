@@ -2,23 +2,33 @@ import React from 'react';
 import { Flex, chakra, Avatar, Text } from '@chakra-ui/react';
 
 const MessagePreview: React.FC<{
-  senderName: string;
-  message: string;
-  timeSent: Date;
-  handleOnClick: React.Dispatch<
+  title: string;
+  desc: string;
+  roomCode: string;
+  handleOnClickRoomJoin: () => void;
+  handleOnClickDataChange: React.Dispatch<
     React.SetStateAction<{
-      senderName: string;
+      roomCode: string;
+      title: string;
       senderStatus: 'Online' | 'Busy' | 'Typing...' | 'Offline' | '';
     }>
   >;
-}> = ({ senderName, message, timeSent, handleOnClick }) => {
+}> = ({
+  title,
+  desc,
+  handleOnClickDataChange,
+  roomCode,
+  handleOnClickRoomJoin,
+}) => {
   return (
     <Flex
       cursor="pointer"
       onClick={e => {
-        handleOnClick({
-          senderName,
+        handleOnClickRoomJoin();
+        handleOnClickDataChange({
+          title,
           senderStatus: 'Online',
+          roomCode,
         });
       }}
       bg="#90e0ef"
@@ -36,17 +46,16 @@ const MessagePreview: React.FC<{
       <Flex>
         <Flex direction="column" ml={1}>
           <chakra.h4 mb={0} fontFamily="'Karla', sans-serif;">
-            {senderName}
+            {title}
             <Text
               fontFamily="'Karla', sans-serif;"
               fontWeight="normal"
               color="gray.700"
               mb={1}
             >
-              {'an hour ago'}
+              {desc}
             </Text>
           </chakra.h4>
-          <Text>{message}</Text>
         </Flex>
       </Flex>
     </Flex>
