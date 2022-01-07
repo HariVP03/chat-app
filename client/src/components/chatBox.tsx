@@ -22,28 +22,33 @@ const ChatBox: React.FC<{
   const [msg, setMsg] = useState('');
 
   return (
-    <Flex minW="60%" minH="100%" overflowY="scroll" direction="column">
+    <Flex minW="60%" minH="100%" direction="column">
       <Flex
         direction="column"
         justify="center"
         minH="12%"
-        bg="#caf0f8"
+        bg="#2A2F32"
         w="100%"
         pl={3}
       >
         <Flex>
           <Flex ml={2} direction="column" justify="center">
-            <chakra.h3 fontFamily="'Signika Negative', sans-serif" my={0}>
+            <chakra.h2
+              fontSize="lg"
+              color="white"
+              fontFamily="'Karla', sans-serif;"
+              my={0}
+            >
               {senderName}
-            </chakra.h3>
-            <chakra.h4 fontFamily="'Signika Negative', sans-serif" my={0}>
+            </chakra.h2>
+            <chakra.h3 color="white" fontFamily="'Karla', sans-serif;" my={0}>
               {senderStatus}
-            </chakra.h4>
+            </chakra.h3>
           </Flex>
         </Flex>
       </Flex>
-      <Flex minH="88%" bg="#90e0ef" direction="column">
-        <Flex w="full" h="90%" direction="column">
+      <Flex minH="88%" bg="#262D31" direction="column">
+        <Flex w="full" h="90%" overflowY="scroll" direction="column">
           {messages?.map(e => {
             return (
               <Flex
@@ -54,17 +59,26 @@ const ChatBox: React.FC<{
               >
                 <Flex
                   justify="center"
-                  bg="green.500"
+                  bg={e.senderName === username ? '#056162' : '#2A2F32'}
                   m={3}
                   px={2}
-                  rounded="md"
+                  roundedTop="md"
+                  roundedBottomLeft={e.senderName === username ? 'md' : 'auto'}
+                  roundedBottomRight={e.senderName !== username ? 'md' : 'auto'}
                   direction="column"
                   h="95%"
                 >
-                  <chakra.h1 fontWeight="bold" color="blue.100" pb={2}>
+                  <chakra.h1
+                    fontFamily="'Karla', sans-serif;"
+                    color="gray.200"
+                    fontWeight="bold"
+                    pb={2}
+                  >
                     {e.senderName}
                   </chakra.h1>
-                  <chakra.h3>{e.msg}</chakra.h3>
+                  <chakra.h3 color="gray.200" fontFamily="'Karla', sans-serif;">
+                    {e.msg}
+                  </chakra.h3>
                 </Flex>
               </Flex>
             );
@@ -77,6 +91,7 @@ const ChatBox: React.FC<{
             value={msg}
             placeholder="Type your message here"
             border="1px solid"
+            color="white"
             borderColor="gray.600"
             onKeyPress={e => {
               if (e.key === 'Enter') {

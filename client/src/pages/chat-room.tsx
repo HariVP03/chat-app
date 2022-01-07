@@ -66,8 +66,8 @@ const ChatRoom = () => {
   >([]);
 
   useEffect(() => {
-    console.log(rooms);
-  }, [rooms]);
+    setMessages([]);
+  }, [roomCode]);
 
   return (
     <Flex justify="center" align="center" h="100vh" w="100vw" bg="gray.800">
@@ -78,18 +78,19 @@ const ChatRoom = () => {
           minW="40%"
           minH="90%"
           roundedLeft="md"
-          bg="#caf0f8"
+          bg="#2A2F32"
           className="hide-scrollbar"
           overflowY="scroll"
         >
           <Flex mb={3} direction="column">
             <chakra.h1
-              fontFamily="'Signika Negative', sans-serif"
+              fontFamily="'Karla', sans-serif;"
               w="full"
               fontWeight="700"
               my={3}
               textAlign="center"
               fontSize="3xl"
+              color="gray.200"
             >
               Welcome, {username}!
             </chakra.h1>
@@ -99,16 +100,36 @@ const ChatRoom = () => {
               onChange={e => {
                 setInput(e.target.value);
               }}
+              borderColor="gray.600"
               placeholder="Search..."
-              borderColor="gray.400"
             />
-            <Button border="1px solid black" my={1} onClick={onOpenEditName}>
+            <Button
+              bg="#131C21"
+              _hover={{ bg: '#323739' }}
+              border="1px solid black"
+              my={1}
+              onClick={onOpenEditName}
+              color="gray.200"
+            >
               Change name
             </Button>
-            <Button border="1px solid black" mb={1} onClick={onOpenCreateRoom}>
+            <Button
+              bg="#131C21"
+              _hover={{ bg: '#323739' }}
+              border="1px solid black"
+              mb={1}
+              onClick={onOpenCreateRoom}
+              color="gray.200"
+            >
               Create a Room
             </Button>
-            <Button border="1px solid black" onClick={onOpenJoinRoom}>
+            <Button
+              bg="#131C21"
+              _hover={{ bg: '#323739' }}
+              border="1px solid black"
+              onClick={onOpenJoinRoom}
+              color="gray.200"
+            >
               Join a Room
             </Button>
           </Flex>
@@ -118,28 +139,35 @@ const ChatRoom = () => {
               desc="Room Code: 1"
               handleOnClickDataChange={setData}
               roomCode={roomCode}
+              selected={roomCode === '1'}
               handleOnClickRoomJoin={() => {
                 socket.emit('join', '1', roomCode);
                 setRoomCode('1');
+                setMessages([]);
               }}
             />
 
             <MessagePreview
               title="Public Room #2"
               desc="Room Code: 2"
+              selected={roomCode === '2'}
               handleOnClickDataChange={setData}
               roomCode={roomCode}
               handleOnClickRoomJoin={() => {
                 socket.emit('join', '2', roomCode);
                 setRoomCode('2');
+                setMessages([]);
               }}
             />
             {rooms?.map(e => {
+              console.log(e.roomCode, roomCode);
+
               return (
                 <MessagePreview
                   key={e.roomCode}
                   title={e.title}
                   desc={e.desc}
+                  selected={e.roomCode === roomCode}
                   handleOnClickDataChange={e.handleOnClickDataChange}
                   roomCode={e.roomCode}
                   handleOnClickRoomJoin={e.handleOnClickRoomJoin}
@@ -179,6 +207,7 @@ const ChatRoom = () => {
                   senderStatus: 'Online',
                   title,
                 });
+                setMessages([]);
               },
               roomCode: roomCodeNew,
               handleOnClickRoomJoin: () => {

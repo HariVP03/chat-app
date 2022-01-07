@@ -5,6 +5,7 @@ const MessagePreview: React.FC<{
   title: string;
   desc: string;
   roomCode: string;
+  selected?: boolean;
   handleOnClickRoomJoin: () => void;
   handleOnClickDataChange: React.Dispatch<
     React.SetStateAction<{
@@ -18,6 +19,7 @@ const MessagePreview: React.FC<{
   desc,
   handleOnClickDataChange,
   roomCode,
+  selected,
   handleOnClickRoomJoin,
 }) => {
   return (
@@ -31,7 +33,7 @@ const MessagePreview: React.FC<{
           roomCode,
         });
       }}
-      bg="#90e0ef"
+      bg={selected ? '#323739' : '#131C21'}
       direction="column"
       w="98%"
       my={1}
@@ -41,21 +43,26 @@ const MessagePreview: React.FC<{
       rounded="lg"
       overflowY="hidden"
       transition="background 0.2s"
-      _hover={{ bg: '#89c2d9' }}
+      _hover={{ bg: '#323739' }}
     >
       <Flex>
         <Flex direction="column" ml={1}>
-          <chakra.h4 mb={0} fontFamily="'Karla', sans-serif;">
+          <chakra.h2
+            fontSize="lg"
+            color="white"
+            mb={0}
+            fontFamily="'Karla', sans-serif;"
+          >
             {title}
             <Text
               fontFamily="'Karla', sans-serif;"
               fontWeight="normal"
-              color="gray.700"
               mb={1}
+              color="white"
             >
               {desc}
             </Text>
-          </chakra.h4>
+          </chakra.h2>
         </Flex>
       </Flex>
     </Flex>
