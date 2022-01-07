@@ -8,7 +8,7 @@ import UserModal from '../components/modals/UserModal';
 import CreateRoomModal from '../components/modals/CreateRoom';
 import JoinRoomModal from '../components/modals/JoinRoom';
 
-const socket = io('https://chat-app-hari.herokuapp.com/');
+const socket = io();
 
 const ChatRoom = () => {
   const [messages, setMessages] = useState<
