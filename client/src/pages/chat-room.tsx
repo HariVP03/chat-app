@@ -8,7 +8,7 @@ import UserModal from '../components/modals/UserModal';
 import CreateRoomModal from '../components/modals/CreateRoom';
 import JoinRoomModal from '../components/modals/JoinRoom';
 
-const socket = io();
+const socket = io('http://localhost:3000');
 
 const ChatRoom = () => {
   const [messages, setMessages] = useState<
